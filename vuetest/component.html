@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="itany">
+			<my-hello></my-hello>
+			
+		</div>
+		<template id="hello">
+			<div>
+				<h3>我是hello父组件</h3>
+				<h3>访问自己的数据:{{msg}},{{name}},{{age}},{{user.username}}</h3>
+				<h3>访问子组件的数据:{{sex}},{{height}}</h3>
+				//:msg是 v-bind:的缩写  父组件通过v-bind:将父组件的数据绑定并传递给通过props声明的子组件
+				<my-world :msg=msg :name=name :age=age :user=user @sendto-component-hello='getData'></my-world>
+			</div>
+		</template>
+		<template id="world">
+			<div>
+				<h4>我是world子组件</h4>
+				<h4>访问自己的数据:{{sex}},{{height}}</h4>
+				<h4>访问父组件的数据:{{msg}},{{name}},{{age}},{{user.id}}</h4>
+				<button @click="send">将参数传递给父组件</button>
+			</div>
+		</template>
+	</body>
+	<script>
+		var vm = new Vue({
+			el: '#itany',
+			components: {
+				'my-hello': {//定义hello父组件
+					methods:{
+						getData(sex,height){//父组件访问子组件数据时。子组件通过$emit来调用父组件的getData方法
+							this.sex=sex;
+							this.height=height;
+						}
+					},
+					data() {
+						return {
+							msg: '网博',
+							name: 'tom',
+							age: 23,
+							user: {
+								id: 9527,
+								username: '唐伯虎'
+							},
+							sex: '',
+							height: ''
+						}
+					},
+					template: '#hello',//父组件模板
+					
+					components:{
+						'my-world':{//定义子组件
+							data(){
+								return {
+									sex:'male',
+									height:185
+								}
+							},
+							template:'#world',//子组件模板
+							props:{//props，用来接收父组件给子组件传递的数据
+								msg:String,
+								age:Number,
+								name:String,
+								user:Object
+							},
+							methods:{ //触发子组件向父组件传递数据的方法
+								send(){
+									this.$emit('sendto-component-hello',this.sex,this.height);//哪个组件定义的emit,就在哪个组件里去声明
+								}
+							}
+							
+						}
+					}
+				}
+			}
+		})
+	</script>
+</html>

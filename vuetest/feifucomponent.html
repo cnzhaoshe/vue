@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>非父子组件之间的数据传递</title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="itany">
+			<my-a></my-a>
+			<my-b></my-b>
+			<my-c></my-c>
+		</div>
+		<template id="a">
+			<div>
+				<h3>我是a组件</h3>
+				<h3>我访问自己的数据:{{name}}</h3>
+				<button @click="send">将数据发送给c</button>
+			</div>
+			
+		</template>
+		<template id="b">
+			<div>
+				<h4>我是b组件</h4>
+				<h4>我访问自己的数据:{{age}}</h4>
+				<button @click="send">将数据发送给c</button>
+			</div>
+			
+		</template>
+		<template id="c">
+			<div>
+				<h5>我是c组件</h5>
+				<h5>我访问a和c的数据:{{name}},{{age}}</h5>
+			</div>
+			
+		</template>
+		<script>
+			var event=new Vue();//用来进行数据传递的中间组件,使用它的$emit和$on
+			var a={
+				template:'#a',
+				data(){
+					return {
+						name:'tom'
+					}
+				},
+				methods:{
+					send(){
+						event.$emit('send-a',this.name);//使用第三个空间的中间组件来进行组件间的数据传递
+					}
+				}
+			}
+			var b={
+				template:'#b',
+				data(){
+					return {
+						age:'18'
+					}
+				},
+				methods:{
+					send:function(){
+						event.$emit('send-b',this.age);
+					}
+				}
+			}
+			var c={
+				template:'#c',
+				data(){
+					return {
+						name:'',
+						age:''
+					}
+				},
+				mounted(){
+					event.$on('send-a',name=> {
+						this.name=name;
+					});
+					event.$on('send-b',age=> {
+						this.age=age;
+					})
+				}
+			}
+			var vm=new Vue({
+				el:'#itany',
+				components:{
+					'my-a':a,
+					'my-b':b,
+					'my-c':c
+				}
+			})
+	
+		
+	</script>
+		
+	</body>	
+</html>

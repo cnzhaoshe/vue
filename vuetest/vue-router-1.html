@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>路由嵌套</title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue-router.js"></script>
+		<style>
+			.active{
+				font-size: 20px;
+				color: red;
+				text-underline: unset;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="itany">
+			<div>
+				<!-- 定义路由页面-->
+				<router-link to="/home">主页</router-link>
+				<router-link to="/users">用户</router-link>
+			</div>
+			<div>
+				<!--路由展示 -->
+				<router-view></router-view>
+			</div>
+			<!-- 切换路由 -->
+			<div>
+				<button @click="qiehuan">切换路由</button>
+			</div>
+			
+		</div>
+		<template id="user">
+			<div>
+				<h3>用户信息</h3>
+				<ul>
+					<!-- 传递参数，通过URL的方式进行传递参数-->
+					<li><router-link to="/users/login?username=tom&pwd=123456">用户登录</router-link></li>
+					<!-- /* 另外一种RESTful方式传参 */ -->
+					<li><router-link to="/users/regist/jery/123123">用户注册</router-link></li>
+				</ul>
+				<router-view></router-view>
+			</div>
+		</template>
+		<script>
+			
+			//1定义组件，路由都是通过组件进行访问的
+			var home={
+				template:'<h3>我是主页</h3>'
+				
+			}
+			
+			var user={
+				template:'#user'
+			}
+			var login={
+				template:'<h3>我是用户登录{{$route.query}}</h3>'<!-- 获取参数-->
+			}
+			/* 另外一种RESTful方式传参 */
+			var regist={
+				template:'<h3>我是用户注册{{$route.params}}</h3>'
+			}
+			const routes=[
+				{
+					path:'/home',
+					component:home
+				},
+				{
+					path:'/users',
+					component:user,
+					children:[
+						{
+							path:'login',
+							component:login
+						},
+						{
+							 /* 另外一种RESTful方式传参 */ 
+							path:'regist/:username/:password',
+							component:regist
+						}
+					]
+					
+				},{
+					path:'*',
+					component:home
+				}
+			]
+			//2路由实例化
+			var router=new VueRouter({
+				routes:routes,
+				linkActiveClass:'active'
+			})
+			//3将路由挂载到给实例
+			new Vue({
+				el:'#itany',
+				router:router,
+				/* 添加路由 */
+				methods:{
+					qiehuan(){
+						router.push({path:'/home'})
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

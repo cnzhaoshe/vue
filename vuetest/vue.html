@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/axios.min.js"></script>
+	</head>
+
+	<body>
+
+		<div id="app">
+			<h3>{{user.name}}</h3>
+			<button @click="addSet">addSet</button>
+			<button @click="delSet">delSet</button>
+			<h3>{{user.age}}</h3>
+			<input type="text" v-model="user.age" />
+		</div>
+		<script>
+			var vm = new Vue({
+				el: '#app',
+				data: {
+					user: {
+						name: 'tom',
+						age:''
+
+					},
+					age:''
+				},
+				methods: {
+					//方式1:vm.$set
+					addSet() {
+						if (this.user.age) {
+							this.user.age++;
+						} else {
+							vm.$set(this.user, 'age', 1);
+						}
+
+					},
+					delSet(){
+						vm.$delete(this.user,'age');
+					}
+				},
+				//监听属性改变
+				watch:{
+					'user.age':(newValue,oldValue) => {
+						console.log("old--"+oldValue);
+						console.log("new--"+newValue);
+					}
+				}
+			});
+			//全局方式
+			/* Vue.set(vm.user,'age',12); */
+		</script>
+	</body>
+</html>
